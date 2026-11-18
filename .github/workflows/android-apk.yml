@@ -17,32 +17,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install Android platform
         run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
-
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0" "platform-tools"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.11.1'
-
       - name: Extract project
         run: unzip -q AI_Job_Assistant_India_MVP.zip -d source
-
       - name: Build debug APK
         working-directory: source/AI_Job_Assistant_India_Firebase/android
         run: gradle assembleDebug --no-daemon --stacktrace
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
