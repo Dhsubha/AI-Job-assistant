@@ -24,7 +24,6 @@ jobs:
           java-version: '17'
       - name: Install Android platform
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0" "platform-tools"
       - name: Set up Gradle
@@ -33,6 +32,25 @@ jobs:
           gradle-version: '8.11.1'
       - name: Extract project
         run: unzip -q AI_Job_Assistant_India_MVP.zip -d source
+      - name: Align Java and Kotlin targets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("source/AI_Job_Assistant_India_Firebase/android/app/build.gradle.kts")
+          s = p.read_text()
+          s = s.replace(
+              '    buildFeatures { compose = true }',
+              '''    compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+              buildFeatures { compose = true }'''
+          )
+          p.write_text(s)
+          PY
       - name: Build debug APK
         working-directory: source/AI_Job_Assistant_India_Firebase/android
         run: gradle assembleDebug --no-daemon --stacktrace
