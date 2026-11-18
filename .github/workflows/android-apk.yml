@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'source.zip'
+      - 'AI_Job_Assistant_India_MVP.zip'
       - '.github/workflows/android-apk.yml'
   workflow_dispatch:
 
@@ -37,7 +37,7 @@ jobs:
           gradle-version: '8.11.1'
 
       - name: Extract project
-        run: unzip -q source.zip -d source
+        run: unzip -q AI_Job_Assistant_India_MVP.zip -d source
 
       - name: Build debug APK
         working-directory: source/AI_Job_Assistant_India_Firebase/android
